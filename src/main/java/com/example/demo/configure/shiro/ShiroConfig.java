@@ -182,13 +182,22 @@ public class ShiroConfig {
             String requestURI = httpServletRequest.getRequestURI();
             String requestedWith = httpServletRequest.getHeader("X-Requested-With");
             if (subject.getPrincipal() == null) {
-                this.saveRequestAndRedirectToLogin(request, response);
+                if (requestedWith != null && requestedWith.equalsIgnoreCase("XMLHttpRequest")) {
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    map.put("errorMsg", "Not Login");
+                    map.put("status", "401");
+                    httpServletResponse.setCharacterEncoding("UTF-8");
+                    httpServletResponse.setContentType("application/json");
+                    httpServletResponse.getWriter().write(JSON.toJSONString(map));
+                } else {
+                    this.saveRequestAndRedirectToLogin(request, response);
+                }
             } else {
                 //ajax请求判断
                 if (requestedWith != null && requestedWith.equalsIgnoreCase("XMLHttpRequest")) {
                     Map<String, Object> map = new HashMap<String, Object>();
-                    map.put("success", false);
-                    map.put("errorMsg", "No authority");
+                    map.put("errorMsg", "No Authority");
+                    map.put("status", "403");
                     httpServletResponse.setCharacterEncoding("UTF-8");
                     httpServletResponse.setContentType("application/json");
                     httpServletResponse.getWriter().write(JSON.toJSONString(map));
@@ -197,7 +206,7 @@ public class ShiroConfig {
                     if (StringUtils.hasText(unauthorizedUrl)) {
                         WebUtils.issueRedirect(request, response, unauthorizedUrl);
                     } else {
-                        WebUtils.toHttp(response).sendError(401);
+                        WebUtils.toHttp(response).sendError(403);
                     }
                 }
             }

@@ -46,9 +46,15 @@ public class UserController extends BaseController {
 
     @RequestMapping("/test")
     public Object test() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("test", propertiesConfig.getTest());
-        return map;
+        try {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("test", propertiesConfig.getTest());
+            return success(map);
+        } catch (Exception e) {
+            log.error("error", e);
+            return fail(e);
+        }
+
     }
 
 

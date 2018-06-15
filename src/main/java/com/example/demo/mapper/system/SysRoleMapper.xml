@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.system.SysRoleMapper">
+
+    <select id="getRolesByUser" resultType="com.example.demo.domain.SysRole">
+        SELECT
+        ROLE.ROLE_ID roleid,
+        ROLE.ROLE_NAME rolename,
+        ROLE.DESCN 'desc'
+        FROM
+            SYS_USER_ROLE UR
+        LEFT JOIN SYS_ROLE ROLE ON UR.ROLE_ID = ROLE.ROLE_ID
+        WHERE UR.USER_ID=#{userId}
+    </select>
+</mapper>

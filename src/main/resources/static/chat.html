@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>chat</title>
+    <script src="script/jquery/jquery-3.2.1.min.js"></script>
+    <script src="script/sockjs/sockjs-client/sockjs.min.js"></script>
+    <script src="script/sockjs/stompjs/stomp.min.js"></script>
+</head>
+<body>
+用户 <input type="text" id="userName"/>
+消息 <input type="text" id="message"/>
+<input type="button" id="button" value="send"/>
+<input type="button" id="disconnect" value="disconnect"/>
+<div id="messages">
+
+</div>
+</body>
+<script>
+    var socket = new SockJS('/demo/websocket');
+    var stompClient = Stomp.over(socket);
+    stompClient.connect('guest','guest',function (frame) {
+        stompClient.subscribe('/user/queue/chat', function(data) {
+            var msg = '<div>'+data.body+'</div>';
+            $("#messages").append(msg);
+        });
+    });
+    var disconnect = function () {
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+    }
+    var send = function () {
+        stompClient.send("/ws/chat", {}, JSON.stringify({
+            'message' : $("#message").val(),
+            'userName' : $("#userName").val()
+        }));
+    }
+    $("#button").on("click",function(){
+        send();
+    });
+    $("#disconnect").on("click",function(){
+        disconnect();
+    });
+</script>
+</html>

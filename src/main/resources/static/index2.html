@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <script src="script/jquery/jquery-3.2.1.min.js"></script>
+    <script src="script/sockjs/sockjs-client/sockjs.min.js"></script>
+    <script src="script/sockjs/stompjs/stomp.min.js"></script>
+</head>
+<body>
+    <input type="button" id="butten" value="send"/>
+  <div id="message">
+
+  </div>
+</body>
+<script>
+    var socket = new SockJS('/demo/websocket');
+    var stompClient = Stomp.over(socket);
+    stompClient.connect({},function (frame) {
+        // 注册发送消息
+        stompClient.subscribe('/topic/send', function(msg) {
+            $("#message").append(msg.body);
+        });
+    });
+    var disconnect = function () {
+        if (stompClient != null) {
+            stompClient.disconnect();
+        }
+    }
+    var send = function () {
+        stompClient.send("/ws/send", {}, JSON.stringify({
+            'message' : 'ww'+new Date().getTime()
+        }));
+    }
+    $("#butten").on("click",function(){
+        send();
+    });
+</script>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.user.UserMapper">
+    <insert id="addUser" parameterType="com.example.demo.domain.SysUser">
+        INSERT INTO SYS_USER (FLOW_ID, USER_NAME,PASSWORD, TEL)
+        VALUES (#{flowId}, #{userName}, #{password}, #{tel});
+    </insert>
+
+    <select id="getUserByName" resultType="com.example.demo.domain.SysUser">
+        SELECT
+          USER_ID AS userId,
+          USER_NAME AS userName,
+          PASSWORD AS password,
+          STATUS AS status,
+          DESCN AS descn
+        FROM SYS_USER T
+        WHERE
+          T.USER_NAME = #{_parameter}
+    </select>
+
+    <select id="getList" resultType="com.example.demo.domain.SysUser">
+        SELECT
+        USER_ID AS userId,
+        USER_NAME AS userName,
+        PASSWORD AS password,
+        STATUS AS status,
+        DESCN AS descn
+        FROM SYS_USER T
+        WHERE
+        1=1
+    </select>
+    <select id="getUser" resultType="com.example.demo.domain.SysUser">
+        SELECT
+        USER_ID AS userId,
+        USER_NAME AS userName,
+        PASSWORD AS password,
+        STATUS AS status,
+        DESCN AS descn
+        FROM SYS_USER T
+        WHERE
+        1=1
+        <if test="userId!=null and userId!=''">
+           AND USER_ID=#{userId}
+        </if>
+    </select>
+
+</mapper>

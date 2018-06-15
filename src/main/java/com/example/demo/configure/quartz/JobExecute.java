@@ -21,6 +21,7 @@ public class JobExecute implements Job {
         String classPath = jobDataMap.getString("classPath");
         String methodName = jobDataMap.getString("methodName");
         try {
+            //反射执行调度方法
             Class clazz = Class.forName(classPath);
             Method declaredMethod = clazz.getDeclaredMethod(methodName, new Class<?>[]{});
             declaredMethod.invoke(clazz.newInstance(), new Object[]{});

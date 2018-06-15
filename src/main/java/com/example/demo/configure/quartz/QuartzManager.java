@@ -17,6 +17,21 @@ public class QuartzManager {
     private static Logger log = LoggerFactory.getLogger(QuartzManager.class);
     private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
 
+
+    public static void startAllJob() {
+        log.info("QuartzManager.startAllJob start........");
+        try {
+            Scheduler scheduler = schedulerFactory.getScheduler();
+            if (!scheduler.isShutdown()) {
+                scheduler.start();
+            }
+        } catch (SchedulerException e) {
+            log.error("startAllJob SchedulerException: startAllJob fail", e);
+            throw new BusinessException("startAllJob SchedulerException: startAllJob fail");
+        }
+        log.info("QuartzManager.startAllJob end........");
+    }
+
     /**
      * 启动定时任务
      *
@@ -46,24 +61,51 @@ public class QuartzManager {
             CronTrigger trigger = (CronTrigger) triggerBuilder.build();
             // 调度容器设置JobDetail和Trigger
             scheduler.scheduleJob(jobDetail, trigger);
-
-            //启动
-            if (!scheduler.isShutdown()) {
-                scheduler.start();
-            }
         } catch (SchedulerException e) {
-            log.error("addJob SchedulerException: create Scheduler fail");
-            throw new BusinessException("addJob SchedulerException: create Scheduler fail");
+            log.error("addJob SchedulerException: addJob fail", e);
+            throw new BusinessException("addJob SchedulerException: addJob fail");
         }
         log.info("QuartzManager.addJob end........");
     }
 
-    
     /**
-     * 停止执行
+     * 暂停任务
+     *
      * @param job
      */
-    public void stopJob(QuartzJob job){
+    public static void pauseJob(QuartzJob job) {
+        log.info("QuartzManager.pauseJob start........");
+        if (job == null) {
+            throw new BusinessException("pauseJob fail: QuartzJob is empty");
+        }
+        try {
+            JobKey jobKey = JobKey.jobKey(job.getName(), job.getGroup());
+            Scheduler scheduler = schedulerFactory.getScheduler();
+            scheduler.pauseJob(jobKey);
+        } catch (SchedulerException e) {
+            log.error("pauseJob SchedulerException: pauseJob fail", e);
+            throw new BusinessException("pauseJob SchedulerException: pauseJob fail");
+        }
+        log.info("QuartzManager.pauseJob end........");
+    }
 
+    /**
+     * 恢复任务
+     * @param job
+     */
+    public static void resumeJob(QuartzJob job){
+        log.info("QuartzManager.resumeJob start........");
+        if (job == null) {
+            throw new BusinessException("resumeJob fail: QuartzJob is empty");
+        }
+        try {
+            JobKey jobKey = JobKey.jobKey(job.getName(),job.getGroup());
+            Scheduler scheduler = schedulerFactory.getScheduler();
+            scheduler.resumeJob(jobKey);
+        } catch (SchedulerException e) {
+            log.error("resumeJob SchedulerException: resumeJob fail", e);
+            throw new BusinessException("resumeJob SchedulerException: create fail");
+        }
+        log.info("QuartzManager.resumeJob end........");
     }
 }

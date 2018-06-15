@@ -15,4 +15,12 @@ public class QuartzTask {
         log.info("QuartzTask.test............");
         log.info("QuartzTask.test............");
     }
+
+    public void test1(){
+        log.info("QuartzTask.test1............");
+        log.info("QuartzTask.test1............");
+        log.info("QuartzTask.test1............");
+        log.info("QuartzTask.test1............");
+        log.info("QuartzTask.test1............");
+    }
 }

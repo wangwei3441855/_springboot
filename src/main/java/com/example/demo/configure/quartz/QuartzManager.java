@@ -58,6 +58,7 @@ public class QuartzManager {
         log.info("QuartzManager.addJob end........");
     }
 
+    
     /**
      * 停止执行
      * @param job

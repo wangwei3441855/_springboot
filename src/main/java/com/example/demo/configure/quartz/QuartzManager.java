@@ -18,6 +18,9 @@ public class QuartzManager {
     private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
 
 
+    /**
+     * 启动所有已添加到scheduler的任务
+     */
     public static void startAllJob() {
         log.info("QuartzManager.startAllJob start........");
         try {

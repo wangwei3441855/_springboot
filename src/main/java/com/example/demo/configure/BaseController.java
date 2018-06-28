@@ -1,6 +1,8 @@
 package com.example.demo.configure;
 
 import com.example.demo.configure.websocket.domain.ServerMessage;
+import com.example.demo.domain.SysUser;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.util.StringUtils;
@@ -40,7 +42,6 @@ public class BaseController extends BaseComponent {
      * @param message 服务端的消息
      */
     protected void sendMessageToUser(String user, ServerMessage message) {
-
         if (StringUtils.isEmpty(user)) {
             throw new BusinessException("send messages fail:  user is empty");
         }
@@ -49,6 +50,14 @@ public class BaseController extends BaseComponent {
         }
         messagingTemplate.convertAndSendToUser(user,
                 "/queue/chat", message);
+    }
+
+    /**
+     * 当前登录用户
+     * @return SysUser
+     */
+    protected SysUser currentUser(){
+        return (SysUser)SecurityUtils.getSubject().getPrincipal();
     }
 
 }

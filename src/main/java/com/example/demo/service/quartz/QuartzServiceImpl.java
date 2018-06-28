@@ -5,12 +5,17 @@ import com.example.demo.domain.QuartzJob;
 import com.example.demo.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QuartzServiceImpl implements QuartzService {
 
     private static Logger log = LoggerFactory.getLogger(QuartzServiceImpl.class);
+
+
+    @Autowired
+    protected QuartzManager quartzManager;
 
     @Override
     public void addQuartzJob(QuartzJob job) {
@@ -29,22 +34,21 @@ public class QuartzServiceImpl implements QuartzService {
         job.setCron("0/50 * * * * ? ");
         job.setClassPath("com.example.demo.service.quartz.QuartzTask");
         job.setMethodName("test");
-        QuartzManager.addJob(job);
+        quartzManager.addJob(job);
 
         QuartzJob job1 = new QuartzJob();
         job1.setId(Utils.createUUid());
-        job1.setName("test1");
+        job1.setName("addORUpDateIPInfo");
         job1.setGroup("group");
         job1.setStatus("0");
         job1.setCron("0/20 * * * * ? ");
-        job1.setClassPath("com.example.demo.service.quartz.QuartzTask");
-        job1.setMethodName("test1");
-        QuartzManager.addJob(job1);
-
+        job1.setClassPath("com.yhsl.ipproxypools.service.quartz.QuartzTask");
+        job1.setMethodName("addORUpDateIPInfo");
+        quartzManager.addJob(job1);
 
 
         //启动所有任务
-        QuartzManager.startAllJob();
+        quartzManager.startAllJob();
         log.info("QuartzService.startQuartzJob end....");
     }
 
@@ -53,7 +57,7 @@ public class QuartzServiceImpl implements QuartzService {
         QuartzJob job1 = new QuartzJob();
         job1.setName("test1");
         job1.setGroup("group");
-        QuartzManager.pauseJob(job1);
+        quartzManager.pauseJob(job1);
     }
 
     @Override
@@ -61,6 +65,6 @@ public class QuartzServiceImpl implements QuartzService {
         QuartzJob job1 = new QuartzJob();
         job1.setName("test1");
         job1.setGroup("group");
-        QuartzManager.resumeJob(job1);
+        quartzManager.resumeJob(job1);
     }
 }

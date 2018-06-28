@@ -6,6 +6,7 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,16 +16,15 @@ import org.springframework.stereotype.Component;
 public class QuartzManager {
 
     private static Logger log = LoggerFactory.getLogger(QuartzManager.class);
-    private static SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-
+    @Autowired
+    protected Scheduler scheduler;
 
     /**
      * 启动所有已添加到scheduler的任务
      */
-    public static void startAllJob() {
+    public void startAllJob() {
         log.info("QuartzManager.startAllJob start........");
         try {
-            Scheduler scheduler = schedulerFactory.getScheduler();
             if (!scheduler.isShutdown()) {
                 scheduler.start();
             }
@@ -40,13 +40,12 @@ public class QuartzManager {
      *
      * @param job
      */
-    public static void addJob(QuartzJob job) {
+    public void addJob(QuartzJob job) {
         log.info("QuartzManager.addJob start........");
         if (job == null) {
             throw new BusinessException("addJob fail: QuartzJob is empty");
         }
         try {
-            Scheduler scheduler = schedulerFactory.getScheduler();
             String jobName = job.getName();
             String jobGroup = job.getGroup();
             String cron = job.getCron();
@@ -76,14 +75,13 @@ public class QuartzManager {
      *
      * @param job
      */
-    public static void pauseJob(QuartzJob job) {
+    public void pauseJob(QuartzJob job) {
         log.info("QuartzManager.pauseJob start........");
         if (job == null) {
             throw new BusinessException("pauseJob fail: QuartzJob is empty");
         }
         try {
             JobKey jobKey = JobKey.jobKey(job.getName(), job.getGroup());
-            Scheduler scheduler = schedulerFactory.getScheduler();
             scheduler.pauseJob(jobKey);
         } catch (SchedulerException e) {
             log.error("pauseJob SchedulerException: pauseJob fail", e);
@@ -94,16 +92,16 @@ public class QuartzManager {
 
     /**
      * 恢复任务
+     *
      * @param job
      */
-    public static void resumeJob(QuartzJob job){
+    public void resumeJob(QuartzJob job) {
         log.info("QuartzManager.resumeJob start........");
         if (job == null) {
             throw new BusinessException("resumeJob fail: QuartzJob is empty");
         }
         try {
-            JobKey jobKey = JobKey.jobKey(job.getName(),job.getGroup());
-            Scheduler scheduler = schedulerFactory.getScheduler();
+            JobKey jobKey = JobKey.jobKey(job.getName(), job.getGroup());
             scheduler.resumeJob(jobKey);
         } catch (SchedulerException e) {
             log.error("resumeJob SchedulerException: resumeJob fail", e);

@@ -28,8 +28,6 @@
 	<levels>
 		<level name="Maven: org.springframework.boot:spring-boot-starter-jdbc:2.0.1.RELEASE" value="project"/>
 		<level name="Maven: org.springframework.boot:spring-boot-starter:2.0.1.RELEASE" value="project"/>
-		<level name="Maven: org.springframework.boot:spring-boot:2.0.1.RELEASE" value="project"/>
-		<level name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.0.1.RELEASE" value="project"/>
 		<level name="Maven: org.springframework.boot:spring-boot-starter-logging:2.0.1.RELEASE" value="project"/>
 		<level name="Maven: ch.qos.logback:logback-classic:1.2.3" value="project"/>
 		<level name="Maven: ch.qos.logback:logback-core:1.2.3" value="project"/>
@@ -98,8 +96,11 @@
 		<level name="Maven: org.springframework:spring-test:5.0.5.RELEASE" value="project"/>
 		<level name="Maven: org.xmlunit:xmlunit-core:2.5.1" value="project"/>
 		<level name="Maven: mysql:mysql-connector-java:5.1.46" value="project"/>
-		<level name="Maven: org.quartz-scheduler:quartz:2.2.1" value="project"/>
-		<level name="Maven: c3p0:c3p0:0.9.1.1" value="project"/>
+		<level name="Maven: org.springframework.boot:spring-boot-devtools:2.0.1.RELEASE" value="project"/>
+		<level name="Maven: org.springframework.boot:spring-boot:2.0.1.RELEASE" value="project"/>
+		<level name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.0.1.RELEASE" value="project"/>
+		<level name="Maven: org.quartz-scheduler:quartz:2.3.0" value="project"/>
+		<level name="Maven: com.mchange:mchange-commons-java:0.2.11" value="project"/>
 		<level name="Maven: org.slf4j:slf4j-api:1.7.25" value="project"/>
 		<level name="Maven: org.apache.spark:spark-core_2.11:2.0.2" value="project"/>
 		<level name="Maven: org.apache.avro:avro-mapred:hadoop2:1.7.7" value="project"/>

@@ -58,4 +58,9 @@ public class SysController {
         log.error("------没有权限-------");
         return "403";
     }
+    @RequestMapping("/404")
+    public String pageNotFound() {
+        log.error("------没找到页面-------");
+        return "404";
+    }
 }

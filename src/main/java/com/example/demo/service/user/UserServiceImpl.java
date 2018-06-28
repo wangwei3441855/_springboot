@@ -44,11 +44,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SysUser> getList(Map<String, Object> map) {
         return userMapper.getList(map);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SysUser getUserRoleRes(Map<String, Object> map) {
         SysUser user = userMapper.getUser(map);
         List<SysRole> rolesByUser = sysRoleMapper.getRolesByUser(map);

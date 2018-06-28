@@ -57,5 +57,17 @@ public class UserController extends BaseController {
 
     }
 
+    @RequestMapping("/getUserRoleAndMenu")
+    public Object getUserRoleAndMenu(){
+        try {
+            SysUser sysUser = currentUser();
+            Map<String, Object> pram = new HashMap<String, Object>();
+            pram.put("userId", sysUser.getUserId());
+            SysUser userRoleRes = userService.getUserRoleRes(pram);
+            return success(userRoleRes);
+        } catch (Exception e) {
+            return fail(e);
+        }
+    }
 
 }

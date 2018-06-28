@@ -1,8 +1,10 @@
 package com.example.demo.configure.quartz;
 
+import com.example.demo.configure.SpringUtils;
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,20 +23,15 @@ public class JobExecute implements Job {
         String classPath = jobDataMap.getString("classPath");
         String methodName = jobDataMap.getString("methodName");
         try {
-            //反射执行调度方法
-            Class clazz = Class.forName(classPath);
-            Method declaredMethod = clazz.getDeclaredMethod(methodName, new Class<?>[]{});
-            declaredMethod.invoke(clazz.newInstance(), new Object[]{});
-        } catch (ClassNotFoundException e) {
-            log.error("JobExecute.execute ClassNotFoundException " + classPath);
-        } catch (NoSuchMethodException e) {
-            log.error("JobExecute.execute NoSuchMethodException " + methodName);
+            Object quartzTask = SpringUtils.getBean(classPath);
+            Method method = BeanUtils.findMethod(quartzTask.getClass(), methodName, new Class[]{});
+            method.invoke(quartzTask, new Object[]{});
         } catch (IllegalAccessException e) {
-            log.error("JobExecute.execute invoke IllegalAccessException " + methodName);
+            log.error("execute IllegalAccessException ", e);
         } catch (InvocationTargetException e) {
-            log.error("JobExecute.execute invoke InvocationTargetException" + methodName);
-        } catch (InstantiationException e) {
-            log.error("JobExecute.execute InstantiationException " + classPath);
+            log.error("execute InvocationTargetException ", e);
+        } catch (Exception e) {
+            log.error("execute Exception ", e);
         }
         log.info("JobExecute.execute end.....");
     }

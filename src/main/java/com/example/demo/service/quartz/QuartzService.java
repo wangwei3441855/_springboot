@@ -7,4 +7,5 @@ public interface QuartzService {
     void startQuartzJob();
     void pauseJob();
     void resumeJob();
+    void test();
 }

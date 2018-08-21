@@ -36,17 +36,6 @@ public class QuartzServiceImpl implements QuartzService {
         job.setMethodName("test");
         quartzManager.addJob(job);
 
-        QuartzJob job1 = new QuartzJob();
-        job1.setId(Utils.createUUid());
-        job1.setName("addORUpDateIPInfo");
-        job1.setGroup("group");
-        job1.setStatus("0");
-        job1.setCron("0/20 * * * * ? ");
-        job1.setClassPath("com.yhsl.ipproxypools.service.quartz.QuartzTask");
-        job1.setMethodName("addORUpDateIPInfo");
-        quartzManager.addJob(job1);
-
-
         //启动所有任务
         quartzManager.startAllJob();
         log.info("QuartzService.startQuartzJob end....");
@@ -66,5 +55,12 @@ public class QuartzServiceImpl implements QuartzService {
         job1.setName("test1");
         job1.setGroup("group");
         quartzManager.resumeJob(job1);
+    }
+
+    @Override
+    public void test() {
+        log.info("test....");
+        log.info("test....");
+        log.info("test....");
     }
 }

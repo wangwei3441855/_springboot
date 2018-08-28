@@ -32,7 +32,7 @@ public class QuartzServiceImpl implements QuartzService {
         job.setGroup("group");
         job.setStatus("0");
         job.setCron("0/50 * * * * ? ");
-        job.setClassPath("com.example.demo.service.quartz.QuartzTask");
+        job.setClassPath("quartzTask");
         job.setMethodName("test");
         quartzManager.addJob(job);
 

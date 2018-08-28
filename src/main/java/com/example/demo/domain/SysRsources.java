@@ -9,6 +9,7 @@ public class SysRsources {
     private String resourceContent;
     private String resourceDesc;
     private int enabled;
+    private String roleName;
 
 
     public String getId() {
@@ -57,5 +58,13 @@ public class SysRsources {
 
     public void setEnabled(int enabled) {
         this.enabled = enabled;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

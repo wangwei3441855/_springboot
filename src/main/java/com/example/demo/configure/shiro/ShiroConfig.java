@@ -17,6 +17,7 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.util.WebUtils;
@@ -61,7 +62,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //过滤器
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
-        filters.put("perms", new SysAuthorizationFilter());
+        filters.put("roles", new SysAuthorizationFilter());
         return shiroFilterFactoryBean;
     }
 
@@ -80,14 +81,22 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
         //需要拦截请求
-        List<SysRsources> allRsources = sysRsourcesService.getAllRsources();
-        if (allRsources != null) {
-            for (SysRsources res : allRsources) {
-                filterChainDefinitionMap.put(res.getResourceContent(), "perms[" + res.getResourceContent() + "]");
-            }
-        }
+        filterChainDefinitionMap.putAll(initRoles(sysRsourcesService.initRsourcesRole()));
         filterChainDefinitionMap.put("/**", "authc");
         return filterChainDefinitionMap;
+    }
+
+    private Map<String, String> initRoles(Map<String, List<String>> map) {
+        Map<String, String> rolesMap = new LinkedHashMap<String, String>();
+        if (map != null && map.size() != 0) {
+            for (String str : map.keySet()) {
+                List<String> list = map.get(str);
+                list.add("ROLE_ADMIN");
+                String rolesStr = "roles"+JSON.toJSONString(list);
+                rolesMap.put(str,rolesStr);
+            }
+        }
+        return rolesMap;
     }
 
     @Bean
@@ -126,29 +135,19 @@ public class ShiroConfig {
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
             SysUser sysUser = (SysUser) principalCollection.getPrimaryPrincipal();
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            if ("admin".equals(sysUser.getUserName())) {
-                info.addRole("ROLE_ADMIN");
-                List<SysRsources> allRsources = sysRsourcesService.getAllRsources();
-                Set<String> permissions = new HashSet<String>();
-                for (SysRsources res : allRsources) {
-                    permissions.add(res.getResourceContent());
-                }
-                info.setStringPermissions(permissions);
-            } else {
-                Map<String, Object> pram = new HashMap<String, Object>();
-                pram.put("userId", sysUser.getUserId());
-                SysUser userRoleRes = userService.getUserRoleRes(pram);
-                Set<String> roles = new HashSet<String>();
-                for (SysRole role : userRoleRes.getRoles()) {
-                    roles.add(role.getRoleName());
-                }
-                Set<String> permissions = new HashSet<String>();
-                for (SysRsources res : userRoleRes.getRsources()) {
-                    permissions.add(res.getResourceContent());
-                }
-                info.setRoles(roles);
-                info.setStringPermissions(permissions);
+            Map<String, Object> pram = new HashMap<String, Object>();
+            pram.put("userId", sysUser.getUserId());
+            SysUser userRoleRes = userService.getUserRoleRes(pram);
+            Set<String> roles = new HashSet<String>();
+            for (SysRole role : userRoleRes.getRoles()) {
+                roles.add(role.getRoleName());
             }
+            Set<String> permissions = new HashSet<String>();
+            for (SysRsources res : userRoleRes.getRsources()) {
+                permissions.add(res.getResourceContent());
+            }
+            info.setRoles(roles);
+            info.setStringPermissions(permissions);
             return info;
         }
 
@@ -173,7 +172,31 @@ public class ShiroConfig {
     }
 
 
-    public class SysAuthorizationFilter extends PermissionsAuthorizationFilter {
+    public class SysAuthorizationFilter extends AuthorizationFilter {
+
+        /**
+         * role[admin,user] 角色and关系修改为or关系
+         * @param servletRequest
+         * @param servletResponse
+         * @param o
+         * @return
+         * @throws Exception
+         */
+        @Override
+        protected boolean isAccessAllowed(ServletRequest servletRequest, ServletResponse servletResponse, Object o) throws Exception {
+            Subject subject = getSubject(servletRequest, servletResponse);
+            String[] rolesArray = (String[]) o;
+            if (rolesArray == null || rolesArray.length == 0) { //没有角色限制，有权限访问
+                return true;
+            }
+            for (int i = 0; i < rolesArray.length; i++) {
+                if (subject.hasRole(rolesArray[i])) { //若当前用户是rolesArray中的任何一个，则有权限访问
+                    return true;
+                }
+            }
+            return false;
+        }
+
         @Override
         protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
             Subject subject = this.getSubject(request, response);

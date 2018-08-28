@@ -10,4 +10,5 @@ import java.util.List;
 public interface SysRsourcesMapper {
     List<SysRsources> getRsourcesByRole(List<SysRole> roles);
     List<SysRsources> getAllRsources();
+    List<SysRsources> getAllRsourcesRole();
 }

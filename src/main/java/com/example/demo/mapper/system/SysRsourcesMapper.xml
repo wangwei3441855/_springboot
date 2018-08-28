@@ -33,4 +33,10 @@
         FROM
         SYS_RESOURCES RES
     </select>
+
+    <select id="getAllRsourcesRole" resultType="com.example.demo.domain.SysRsources">
+        SELECT SR.ROLE_NAME roleName,RES.RESOURCE_CONTENT resourceContent FROM SYS_RESOURCES RES
+        LEFT JOIN SYS_ROLE_RESOURCE SRR ON SRR.RESOURCE_ID=RES.ID
+        LEFT JOIN SYS_ROLE SR ON SR.ROLE_ID=SRR.ROLE_ID
+    </select>
 </mapper>
